@@ -1,0 +1,40 @@
+<NotepadPlus>
+    <Session activeView="0">
+        <mainView activeIndex="0">
+            <File firstVisibleLine="187" xOffset="0" scrollWidth="875" startPos="6311" endPos="6311" selMode="0" lang="HTML" encoding="-1" filename="D:\cc\cc\projekt_v2\index.html" backupFilePath="" originalFileLastModifTimestamp="1438019133">
+                <Fold line="165" />
+                <Fold line="188" />
+                <Fold line="279" />
+                <Fold line="285" />
+                <Fold line="298" />
+            </File>
+            <File firstVisibleLine="91" xOffset="0" scrollWidth="805" startPos="2740" endPos="2695" selMode="0" lang="HTML" encoding="-1" filename="D:\cc\cc\laby\Lab04e_navigation\01_controls_trackball.html" backupFilePath="" originalFileLastModifTimestamp="1428569750" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="427" startPos="144" endPos="144" selMode="0" lang="Javascript" encoding="-1" filename="C:\Users\Damian\Downloads\exportBlender\exportBlender\WebGLExample.js" backupFilePath="" originalFileLastModifTimestamp="1399582169" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="122976" startPos="490" endPos="490" selMode="0" lang="Javascript" encoding="-1" filename="C:\Users\Damian\Downloads\exportBlender\exportBlender\WebGLExample.Sphere.001.js" backupFilePath="" originalFileLastModifTimestamp="1399582169" />
+        </mainView>
+        <subView activeIndex="4">
+            <File firstVisibleLine="181" xOffset="0" scrollWidth="1295" startPos="7316" endPos="7426" selMode="0" lang="HTML" encoding="-1" filename="D:\cc\cc\pomoc\Build_a_3D_game\finished\index.html" backupFilePath="" originalFileLastModifTimestamp="1437998538">
+                <Fold line="197" />
+                <Fold line="255" />
+                <Fold line="269" />
+                <Fold line="283" />
+                <Fold line="294" />
+                <Fold line="307" />
+                <Fold line="329" />
+                <Fold line="377" />
+                <Fold line="384" />
+                <Fold line="396" />
+                <Fold line="401" />
+                <Fold line="405" />
+            </File>
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="4389" startPos="414" endPos="414" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\projekt_v2\models\level1_scal.json" backupFilePath="" originalFileLastModifTimestamp="1438016153" />
+            <File firstVisibleLine="39" xOffset="0" scrollWidth="777" startPos="589" endPos="589" selMode="0" lang="HTML" encoding="-1" filename="D:\cc\cc\pomoc\scene import\index-part-1.html" backupFilePath="" originalFileLastModifTimestamp="1438016973" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="777" startPos="0" endPos="0" selMode="0" lang="HTML" encoding="-1" filename="D:\cc\cc\pomoc\scene import\index-part-3.html" backupFilePath="" originalFileLastModifTimestamp="1438018116" />
+            <File firstVisibleLine="2" xOffset="0" scrollWidth="1078" startPos="453" endPos="453" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\projekt_v2\models\level1\level1.json" backupFilePath="" originalFileLastModifTimestamp="1438018610" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1785" startPos="1025" endPos="1025" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\projekt_v2\models\level1\level1.Cube.000.json" backupFilePath="" originalFileLastModifTimestamp="1438018610" />
+            <File firstVisibleLine="5" xOffset="0" scrollWidth="1785" startPos="1554" endPos="1554" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\projekt_v2\models\level1\level1.Cube.004.json" backupFilePath="" originalFileLastModifTimestamp="1438018610" />
+            <File firstVisibleLine="7" xOffset="0" scrollWidth="1785" startPos="1554" endPos="1554" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\projekt_v2\models\level1\level1.Cube.005.json" backupFilePath="" originalFileLastModifTimestamp="1438018610" />
+            <File firstVisibleLine="7" xOffset="0" scrollWidth="1785" startPos="1554" endPos="1554" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\projekt_v2\models\level1\level1.Cube.006.json" backupFilePath="" originalFileLastModifTimestamp="1438018610" />
+        </subView>
+    </Session>
+</NotepadPlus>

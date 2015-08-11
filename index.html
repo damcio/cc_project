@@ -1,0 +1,369 @@
+<html>
+<head>
+<title>G*erka</title>
+</head>
+<body>
+
+	<!-- //first screen -->
+<div id="blank"><div id="loading">
+<!-- <p><img src="img/logo.jpg"></p> -->
+<h3 class="message">Loading</h3></div></div>
+<div id="ThreeJS"></div>
+<script src="js/jquery.js"></script>
+<script src="js/three.min.js"></script>
+<script src="js/Detector.js"></script>
+<script src="js/BlendCharacter.js"></script>
+<script src="js/BlendCharacterGui.js"></script>
+<script src="js/dat.gui.min.js"></script>
+<script>
+	//zmienne
+	var container, scene, camera, renderer, composer;
+	var direction = "", openDoor = false, level = 1, inPlay = false;
+	var player, door, key, platforms, room, enemy, ray, rayUp;
+	var collidableMeshList = [];
+	var meshs = [];
+	
+	var ifHeld = false, rtHeld = false;
+	var vy = 0, vx = 0, loaded = 0, gravity = 0.3, rise = 0.2;
+	var jumping = false, inAir = true, falling = false;
+	var SHADOW_MAP_WIDTH = 2048, SHADOW_MAP_HEIGHT = 2048;	
+	
+	$(function() {
+		init();
+	});
+	
+	//////funkcje
+	
+	//inicjalizacjia
+	function init() {
+		//scena
+		scene = new THREE.Scene();
+		//scene.fog = new THREE.FogExp2( 0xff4f6e, 0.002 );
+		//kamera
+		var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+		var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH/SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+		camera = new THREE.PerspectiveCamera (VIEW_ANGLE, ASPECT, NEAR, FAR);
+		scene.add(camera);
+		camera.position.set(0,150,400);
+		camera.lookAt(scene.position);
+		
+		//renderer
+		//if (Detector.webgl)
+		//	renderer = new THREE.WebGLRenderer ({antialias:true});
+		//else
+		//	renderer = new THREE.CanvasRenderer();
+		//renderer.setSize(SCREEN_WIDTH. SCREEN_HEIGHT);
+		//renderer.autoClear = false;
+		
+		//renderer2.0
+		renderer = new THREE.WebGLRenderer( { alpha:true, antialias: true } );
+		renderer.setSize( window.innerWidth, window.innerHeight );		
+		renderer.setClearColor( 0xff4f6e, 1 );
+		renderer.shadowMapEnabled = true;
+		renderer.shadowMapSoft = true;
+		//link do elementu div
+		container = document.getElementById ( 'ThreeJS' );
+		container.appendChild ( renderer.domElement );
+		
+		//swiatlo
+		var light = new THREE.SpotLight ( 0xffffff, 1, 0, Math.PI, 1);
+		light.position.set (-200, 800, 0);
+		light.target.position.set(0, 0, 0);
+		
+		light.castShadow = true;
+		light.shadowCameraNear = 200;
+		light.shadowCameraFar = 800;
+		light.shadowCameraFov = 45;
+		
+		light.shadowBias = 0.005;
+		light.shadowDarkness = 0.55;
+		light.shadowMapWidth = SHADOW_MAP_WIDTH;
+		light.shadowMapHeight = SHADOW_MAP_HEIGHT;
+		light.shadowMapSoft = true;
+		
+		scene.add( light );
+		
+		//second light
+		var specLight = new THREE.PointLight (0xffffff, .1, 0, Math.PI, 1);
+		scene.add(specLight);
+		
+		//promien od kolizji
+		ray = new THREE.Raycaster();
+		ray.ray.direction.set( 0, -1 ,0 );
+		rayUp = new THREE.Raycaster();
+		rayUp.ray.direction.set( 0, 1, 0 );
+		
+		//user input
+		document.addEventListener('keydown',function(e){
+			switch(e.keyCode){
+				case 37: //left
+					direction = "left";
+					break;
+				case 38: //up
+					jump();
+					break;
+				case 39: //right
+					direction = "right";
+					break;
+			};		
+		}, false);
+			
+		document.addEventListener('keyup',function(e){
+			switch(e.keyCode){
+				case 37: //left
+					direction = "";
+					break;
+				case 39: //right
+					direction = "";
+					break;
+			};		
+		}, false);
+			
+		loadModels();
+	};
+	
+	
+	////wczytanie modeli i gry
+	
+	//modele
+	function loadModels(){
+		var loader = new THREE.JSONLoader();
+		if (level>1){
+			
+			scene.remove(platforms);			
+			collidableMeshList.remove(1);
+		}	
+		
+		if (level == 1){
+	//		//load level
+	//		loader.load('models/level1_scal.json', function (geometry, materials){
+	//			var material = new THREE.MeshLambertMaterial(materials[1]);
+	//			//var material = new THREE.MeshLambertMaterial({ ambient: 0x999999, color: 0xccff00, emissive: 0xccee00 });
+	//			platforms = new THREE.Mesh(geometry, material);
+	//			platforms.scale.multiplyScalar(1000);
+	//			platforms.castShadow = true;
+	//			platforms.recieveShadow = true;
+	//			scene.add(platforms);		
+	//			collidableMeshList.push(platforms);
+	//			preload();			
+	//		});				
+			//alt load level
+			loadScene();
+			
+		    //load the hero robot
+			//loader = new THREE.JSONLoader();
+			//loader.load('models/bot.js', createSkinnedMesh);
+			//loader.load('models/simple_model.json', createSkinnedMesh);
+			
+			//player z blendcharacter:	
+			player = new THREE.BlendCharacter();
+			player.load( "models/simple_model.json", preload);
+			scene.add( player );
+			//
+		}	
+	}
+	
+	function createSkinnedMesh (geometry, materials) {
+			var material = new THREE.MeshLambertMaterial({ ambient: 0x999999, color: 0x7f4302, emissive: 0x332639 });
+			player = new THREE.Mesh(geometry, material);
+			player.scale.multiplyScalar(5);
+			player.castShadow = true;
+			player.receiveShadow = true;
+			scene.add(player);
+			preload();
+	}
+	//nowy level
+	function levelUp(newLevel){
+		
+		$( "#play" ).unbind("click");
+		if (level==3){
+			$( '.play' ).replaceWith( "<h3 class='message'>Koniec</h3>" );
+		} else {
+			$( '.play' ).replaceWith( "<h3 class='message'>Loading</h3>" );
+		}
+		$( "#blank" ).fadeIn("fast");
+		if(newLevel){			
+			loadModels();
+		}else{
+			levelSet();	
+		}
+		//game is paused
+		inPlay = false;	
+	}
+
+	//preload
+	function preload(){
+		if (level == 1){
+			//every time we load a model increase by 1
+			loaded ++;
+			if (loaded == 2){
+				//when it is all loaded set up the level and start animating
+				levelSet();
+				animate();
+			}
+		} else {
+			//other levels just set the level
+			levelSet();	
+		}
+	}
+
+	//ustawienie levelu
+	function levelSet(){
+		if (level == 1){ 
+			//level 1 pozycje
+			//platforms.position.y = 200; 
+			player.position.set(0, 20, 0);			
+		}
+		//gotowe:
+		$( '.message' ).replaceWith( "<h3 id='play' class='play'>PLAY</h3>" );
+		$( "#play" ).click(function() { 
+			$( "#blank" ).fadeOut("slow");
+			inPlay = true;
+		});
+	
+	}
+	
+	//load scene WIP
+	function loadScene(){
+		var callbackFinished = function ( result ) {
+			result.scene.traverse( function ( object ) {
+				if ( object instanceof THREE.Mesh ) {
+					object.scale.multiplyScalar(1000);
+					object.position.x = 1000*object.position.x;
+					object.position.y = 1000*object.position.y;
+					object.position.z = 1000*object.position.z;
+					meshs.push(object);
+				}
+			} );
+			for ( meshsId in meshs) {
+				meshs[meshsId].castShadow = true;
+				meshs[meshsId].recieveShadow = true;
+				scene.add(meshs[meshsId]);
+				collidableMeshList.push(meshs[meshsId]);
+				preload();
+				}
+			};
+		/*load scene*/
+		var loader1 = new THREE.SceneLoader();
+		loader1.load('models/level1/level1.json', callbackFinished);
+		
+	}
+	////elementy gameplay
+	//skok
+	function jump() {
+		if (jumping == false && inAir == false) {
+		player.position.y += 10;
+		vy = -8;
+		jumping = true;		
+		}
+	}
+
+	//spr. kolizji
+	function collisionPlayer (xPos, yPos, Radius){
+		var distX = xPos - player.position.x;
+		var distY = yPos - player.position.y;
+		var distR = Radius + 25;
+		if (disX * distX + distY * distY <= distR * distR){
+			return true;
+		}
+	}
+	
+	//renderer
+	function render() {
+		renderer.clear();
+		renderer.render( scene, camera );
+		//composer.render(0.01);
+	}
+
+	//pomoc przy wektorach
+	Array.prototype.remove = function(from, to) {
+	  var rest = this.slice((to || from) + 1 || this.length);
+	  this.length = from < 0 ? this.length + from : from;
+	  return this.push.apply(this, rest);
+	};
+	
+	Array.prototype.insert = function (index, item) {
+	  this.splice(index, 0, item);
+	};
+	
+	function animate() {
+		requestAnimationFrame (animate, renderer.domElement);
+		if (inPlay){
+		render();
+		update();
+		}
+	}
+	
+	//main loop
+	function update(){
+		//grawitacja
+		vy += gravity;
+		if (inAir){
+			if  (vy>5){
+				vy=5;
+			}
+		}
+		
+		//ruch + ograniczenia ruchu
+		if (direction == "left" && player.position.x > -100 ){
+			player.position.x += vx;
+		}
+		if (direction == "right" && player.position.x < 600 ){
+			player.position.x += vx;
+		}
+		
+		//kolizje platform
+		var originPoint = player.position.clone();
+		ray.ray.origin.copy (originPoint);
+		rayUp.ray.origin.copy(originPoint);
+		
+		//nad glowa
+		var intersections2 = rayUp.intersectObjects(collidableMeshList);
+		if (intersections2.length > 0) {
+			var distance = intersections2[0].distance;
+			if (falling == false && distance > 0 && distance <= 23){
+				vy = 0;
+				falling = true;
+			}
+		}		
+		
+		//ponizej
+		var intersections = ray.intersectObjects( collidableMeshList );
+		if ( intersections.length > 0 ) {
+			var distance = intersections[ 0 ].distance;
+			if ( distance > 0 && distance > 5 ) {
+				player.position.y -= vy;
+				inAir = true;
+			}else{
+				falling = false;
+				inAir = false;
+				vy=0; 		// switch gravity off
+				jumping = false;
+			}
+		}
+		
+		if (inAir == false && distance < 4.5){
+		player.position.y+=1;
+		}
+		
+		//ruch lewo i prawo
+		if ( direction == "left" ){
+			vx = -2;
+			player.rotation.y = -Math.PI/2;
+		}
+		if ( direction == "right" ){
+			vx = 2;
+			player.rotation.y = Math.PI/2;
+		}	
+		
+		//kamera sledzi
+		camera.lookAt(player.position)
+		camera.position.x += ((player.position.x - camera.position.x))* .02;
+		camera.position.y += (((player.position.y+30 ) - camera.position.y)) * .08 			
+
+	}	
+
+	
+</script>
+</body>
+</html>
