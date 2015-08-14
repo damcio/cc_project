@@ -1,0 +1,45 @@
+<NotepadPlus>
+    <Session activeView="1">
+        <mainView activeIndex="4">
+            <File firstVisibleLine="206" xOffset="0" scrollWidth="805" startPos="6333" endPos="6333" selMode="0" lang="HTML" encoding="-1" filename="D:\cc\cc\pomoc\mrdoob-three.js-r71-5-gd6384d2\mrdoob-three.js-d6384d2\examples\webgl_animation_skinning_blending.html" backupFilePath="" originalFileLastModifTimestamp="1433982743" />
+            <File firstVisibleLine="3" xOffset="0" scrollWidth="875" startPos="937" endPos="937" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\projekt_v2\js\BlendCharacter.js" backupFilePath="" originalFileLastModifTimestamp="1433982743" />
+            <File firstVisibleLine="9" xOffset="0" scrollWidth="637" startPos="3905" endPos="3905" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\projekt_v2\js\BlendCharacterGui.js" backupFilePath="" originalFileLastModifTimestamp="1433982743" />
+            <File firstVisibleLine="12" xOffset="0" scrollWidth="777" startPos="0" endPos="0" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\pomoc\mrdoob-three.js-r71-5-gd6384d2\mrdoob-three.js-d6384d2\src\extras\animation\Animation.js" backupFilePath="" originalFileLastModifTimestamp="1433982743" />
+            <File firstVisibleLine="119" xOffset="0" scrollWidth="1085" startPos="2183" endPos="2191" selMode="0" lang="HTML" encoding="-1" filename="D:\cc\cc\pomoc\three-mm3d-master\three-mm3d-master\demo-r68\test.html" backupFilePath="" originalFileLastModifTimestamp="1439550239" />
+        </mainView>
+        <subView activeIndex="0">
+            <File firstVisibleLine="84" xOffset="0" scrollWidth="896" startPos="4569" endPos="4569" selMode="0" lang="HTML" encoding="-1" filename="D:\cc\cc\projekt_v2\index.html" backupFilePath="" originalFileLastModifTimestamp="1439567242">
+                <Mark line="379" />
+                <Fold line="229" />
+                <Fold line="248" />
+                <Fold line="272" />
+                <Fold line="280" />
+                <Fold line="315" />
+                <Fold line="325" />
+                <Fold line="332" />
+                <Fold line="338" />
+                <Fold line="364" />
+                <Fold line="367" />
+                <Fold line="412" />
+            </File>
+            <File firstVisibleLine="36" xOffset="0" scrollWidth="791" startPos="520" endPos="520" selMode="0" lang="HTML" encoding="-1" filename="D:\cc\cc\pomoc\tutorial_package\tutorial_package\threejs_rig.html" backupFilePath="" originalFileLastModifTimestamp="1439214247" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="289317" startPos="96" endPos="96" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\projekt_v2\models\bot.js" backupFilePath="" originalFileLastModifTimestamp="1439324166" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="290913" startPos="117574" endPos="117574" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\projekt_v2\models\simple_model.json" backupFilePath="C:\Users\Damian\AppData\Roaming\Notepad++\backup\simple_model.json@2015-08-14_164835" originalFileLastModifTimestamp="1439553567" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="4873869" startPos="890625" endPos="890625" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\pomoc\mrdoob-three.js-r71-5-gd6384d2\mrdoob-three.js-d6384d2\examples\models\skinned\marine\marine_anims.js" backupFilePath="" originalFileLastModifTimestamp="1433982743" />
+            <File firstVisibleLine="495" xOffset="0" scrollWidth="1309" startPos="10440" endPos="10444" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\pomoc\mrdoob-three.js-r71-5-gd6384d2\mrdoob-three.js-d6384d2\src\loaders\JSONLoader.js" backupFilePath="" originalFileLastModifTimestamp="1433982743" />
+            <File firstVisibleLine="198" xOffset="0" scrollWidth="882" startPos="121" endPos="121" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\pomoc\three-mm3d-master\three-mm3d-master\mm3d.js" backupFilePath="" originalFileLastModifTimestamp="1437559377" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="679" startPos="391" endPos="391" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\pomoc\mrdoob-three.js-r71-5-gd6384d2\mrdoob-three.js-d6384d2\src\Three.js" backupFilePath="" originalFileLastModifTimestamp="1433982743" />
+            <File firstVisibleLine="3421" xOffset="0" scrollWidth="1319556" startPos="171668" endPos="171668" selMode="0" lang="Javascript" encoding="-1" filename="D:\cc\cc\projekt_v2\models\simple_model1.json" backupFilePath="" originalFileLastModifTimestamp="1439561190">
+                <Fold line="17" />
+                <Fold line="19" />
+                <Fold line="172" />
+                <Fold line="325" />
+                <Fold line="478" />
+                <Fold line="631" />
+                <Fold line="784" />
+                <Fold line="937" />
+                <Fold line="1705" />
+            </File>
+        </subView>
+    </Session>
+</NotepadPlus>

@@ -1,0 +1,117 @@
+{
+
+	"urlBaseType": "relativeToScene",
+
+	"metadata": {
+		"formatVersion" : 3.2,
+		"type"          : "scene",
+		"sourceFile"    : "level1.blend",
+		"generatedBy"   : "Blender 2.7 Exporter",
+		"objects"       : 4,
+		"geometries"    : 4,
+		"materials"     : 3,
+		"textures"      : 0
+	},
+
+	"objects": {
+		"Cube": {
+			"geometry"      : "geo_Cube.004",
+			"groups"        : [  ],
+			"material"      : "Material.002",
+			"position"      : [ 0.3, 0.12, 4.10743e-09 ],
+			"rotation"      : [ -1.5708, 0, 0 ],
+			"quaternion"    : [ -0.707107, 0, 0, 0.707107 ],
+			"scale"         : [ 0.05, 0.05, 0.001 ],
+			"visible"       : true,
+			"castShadow"    : false,
+			"receiveShadow" : false,
+			"doubleSided"   : false
+		},
+		"Cube.001": {
+			"geometry"      : "geo_Cube.005",
+			"groups"        : [  ],
+			"material"      : "Material",
+			"position"      : [ 0.5, 0, 0 ],
+			"rotation"      : [ -1.5708, 0, 0 ],
+			"quaternion"    : [ -0.707107, 0, 0, 0.707107 ],
+			"scale"         : [ 0.6, 0.05, 0.001 ],
+			"visible"       : true,
+			"castShadow"    : false,
+			"receiveShadow" : false,
+			"doubleSided"   : false
+		},
+		"Cube.002": {
+			"geometry"      : "geo_Cube.000",
+			"groups"        : [  ],
+			"material"      : "Material.001",
+			"position"      : [ 0.15, 0.08, 0.00122814 ],
+			"rotation"      : [ -1.5708, 0, 0 ],
+			"quaternion"    : [ -0.707107, 0, 0, 0.707107 ],
+			"scale"         : [ 0.05, 0.05, 0.001 ],
+			"visible"       : true,
+			"castShadow"    : false,
+			"receiveShadow" : false,
+			"doubleSided"   : false
+		},
+		"Cube.003": {
+			"geometry"      : "geo_Cube.006",
+			"groups"        : [  ],
+			"material"      : "Material",
+			"position"      : [ 0.3, 0.02, 6.84571e-10 ],
+			"rotation"      : [ -1.5708, 0, 0 ],
+			"quaternion"    : [ -0.707107, 0, 0, 0.707107 ],
+			"scale"         : [ 0.05, 0.05, 0.001 ],
+			"visible"       : true,
+			"castShadow"    : false,
+			"receiveShadow" : false,
+			"doubleSided"   : false
+		}
+	},
+
+	"geometries": {
+		"geo_Cube.004": {
+			"type" : "ascii",
+			"url"  : "level1.Cube.004.json"
+		},
+		"geo_Cube.005": {
+			"type" : "ascii",
+			"url"  : "level1.Cube.005.json"
+		},
+		"geo_Cube.000": {
+			"type" : "ascii",
+			"url"  : "level1.Cube.000.json"
+		},
+		"geo_Cube.006": {
+			"type" : "ascii",
+			"url"  : "level1.Cube.006.json"
+		}
+	},
+
+	"materials": {
+		"Material": {
+			"type"       : "MeshLambertMaterial",
+			"parameters" : { "color": 838660, "ambient": 838660, "emissive": 0, "opacity": 1, "vertexColors": "vertex", "blending": "NormalBlending" }
+		},
+		"Material.001": {
+			"type"       : "MeshLambertMaterial",
+			"parameters" : { "color": 264396, "ambient": 264396, "emissive": 0, "opacity": 1, "vertexColors": "vertex", "blending": "NormalBlending" }
+		},
+		"Material.002": {
+			"type"       : "MeshLambertMaterial",
+			"parameters" : { "color": 13407246, "ambient": 13407246, "emissive": 0, "opacity": 1, "vertexColors": "vertex", "blending": "NormalBlending" }
+		}
+	},
+
+	"transform": {
+		"position" : [ 0, 0, 0 ],
+		"rotation" : [ 0, 0, 0 ],
+		"scale"    : [ 1, 1, 1 ]
+	},
+
+	"defaults": {
+		"bgcolor" : [ 0, 0, 0 ],
+		"bgalpha" : 1.000000,
+		"camera"  : ""
+	}
+
+}

@@ -10,18 +10,19 @@
 <h3 class="message">Loading</h3></div></div>
 <div id="ThreeJS"></div>
 <script src="js/jquery.js"></script>
-<script src="js/three.min.js"></script>
+<script src="js/three.js"></script>
 <script src="js/Detector.js"></script>
-<script src="js/BlendCharacter.js"></script>
-<script src="js/BlendCharacterGui.js"></script>
+<script src="SpeedBlendCharacter.js"></script>
 <script src="js/dat.gui.min.js"></script>
 <script>
 	//zmienne
 	var container, scene, camera, renderer, composer;
-	var direction = "", openDoor = false, level = 1, inPlay = false;
+	var direction = "", animationSelect = "", openDoor = false, level = 1, inPlay = false;
 	var player, door, key, platforms, room, enemy, ray, rayUp;
 	var collidableMeshList = [];
 	var meshs = [];
+	
+	var clock = new THREE.Clock();
 	
 	var ifHeld = false, rtHeld = false;
 	var vy = 0, vx = 0, loaded = 0, gravity = 0.3, rise = 0.2;
@@ -38,13 +39,13 @@
 	function init() {
 		//scena
 		scene = new THREE.Scene();
-		//scene.fog = new THREE.FogExp2( 0xff4f6e, 0.002 );
+		scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
 		//kamera
 		var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
 		var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH/SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
 		camera = new THREE.PerspectiveCamera (VIEW_ANGLE, ASPECT, NEAR, FAR);
 		scene.add(camera);
-		camera.position.set(0,150,400);
+		camera.position.set(0,150,200);
 		camera.lookAt(scene.position);
 		
 		//renderer
@@ -58,7 +59,7 @@
 		//renderer2.0
 		renderer = new THREE.WebGLRenderer( { alpha:true, antialias: true } );
 		renderer.setSize( window.innerWidth, window.innerHeight );		
-		renderer.setClearColor( 0xff4f6e, 1 );
+		renderer.setClearColor( 0xaaaaaa, 1 );
 		renderer.shadowMapEnabled = true;
 		renderer.shadowMapSoft = true;
 		//link do elementu div
@@ -104,6 +105,7 @@
 					break;
 				case 39: //right
 					direction = "right";
+					animationSelect = "walk";					
 					break;
 			};		
 		}, false);
@@ -115,6 +117,7 @@
 					break;
 				case 39: //right
 					direction = "";
+					animationSelect = "idle";
 					break;
 			};		
 		}, false);
@@ -150,27 +153,78 @@
 			//alt load level
 			loadScene();
 			
-		    //load the hero robot
-			//loader = new THREE.JSONLoader();
+		    ////load the hero robot
+			loader = new THREE.JSONLoader();
 			//loader.load('models/bot.js', createSkinnedMesh);
-			//loader.load('models/simple_model.json', createSkinnedMesh);
+			loader.load('models/simple_model1.json', loadPlayer);
 			
-			//player z blendcharacter:	
-			player = new THREE.BlendCharacter();
-			player.load( "models/simple_model.json", preload);
-			scene.add( player );
+			////player z blendcharacter:	
+			//player = new THREE.BlendCharacter();
+			//player.load( "models/simple_model.json", loadPlayer);
+			//player.load( "models/marine_anims.js", preload);
+			//scene.add( player );
 			//cokolwiek
 		}	
 	}
 	
-	function createSkinnedMesh (geometry, materials) {
-			var material = new THREE.MeshLambertMaterial({ ambient: 0x999999, color: 0x7f4302, emissive: 0x332639 });
-			player = new THREE.Mesh(geometry, material);
-			player.scale.multiplyScalar(5);
-			player.castShadow = true;
-			player.receiveShadow = true;
-			scene.add(player);
-			preload();
+	function loadPlayer (geometry, materials) {
+		
+		//var material = new THREE.MeshLambertMaterial(materials[0]);
+		
+		var originalMaterial = materials[ 0 ];
+
+		originalMaterial.skinning = true;
+		
+		player = new THREE.SkinnedMesh(geometry, originalMaterial);
+		
+				
+		player.animations = {};
+		
+		for ( var i = 0; i < geometry.animations.length; ++ i ) {
+				
+				////v1
+				
+				THREE.AnimationHandler.add(geometry.animations[ i ]);
+				
+				var animName = geometry.animations[ i ].name;
+				player.animations[ animName ] = new THREE.Animation( player, geometry.animations[ i ] );
+				//ensureLoop( player.animations[ animName ]);
+				
+				
+				
+		}	
+		
+		//player.scale.multiplyScalar(5);
+		player.castShadow = true;
+		player.receiveShadow = true;
+		
+		scene.add(player);
+		
+		//skellington helper
+		helper = new THREE.SkeletonHelper( player );
+		
+		helper.material.linewidth = 3;
+		helper.visible = true;
+		scene.add( helper );
+		
+		preload();
+	}	
+
+	function ensureLoop( animation ) {
+
+		for ( var i = 0; i < animation.hierarchy.length; i ++ ) {
+
+			var bone = animation.hierarchy[ i ];
+
+			var first = bone.keys[ 0 ];
+			var last = bone.keys[ bone.keys.length - 1 ];
+
+			last.pos = first.pos;
+			last.rot = first.rot;
+			last.scl = first.scl;
+
+		}
+
 	}
 	//nowy level
 	function levelUp(newLevel){
@@ -211,7 +265,7 @@
 	function levelSet(){
 		if (level == 1){ 
 			//level 1 pozycje
-			//platforms.position.y = 200; 
+			//platforms.position.x = 200; 
 			player.position.set(0, 20, 0);			
 		}
 		//gotowe:
@@ -228,10 +282,10 @@
 		var callbackFinished = function ( result ) {
 			result.scene.traverse( function ( object ) {
 				if ( object instanceof THREE.Mesh ) {
-					object.scale.multiplyScalar(1000);
-					object.position.x = 1000*object.position.x;
-					object.position.y = 1000*object.position.y;
-					object.position.z = 1000*object.position.z;
+				//	object.scale.multiplyScalar(1000);
+					object.position.x = object.position.x+100;
+				//	object.position.y = 1000*object.position.y;
+				//	object.position.z = 1000*object.position.z;
 					meshs.push(object);
 				}
 			} );
@@ -252,8 +306,8 @@
 	//skok
 	function jump() {
 		if (jumping == false && inAir == false) {
-		player.position.y += 10;
-		vy = -8;
+		player.position.y += 8;
+		vy = -5;
 		jumping = true;		
 		}
 	}
@@ -287,8 +341,11 @@
 	};
 	
 	function animate() {
-		requestAnimationFrame (animate, renderer.domElement);
+		var delta = clock.getDelta();
+		requestAnimationFrame (animate, renderer.domElement);		
 		if (inPlay){
+		THREE.AnimationHandler.update(delta);
+		helper.update();
 		render();
 		update();
 		}
@@ -312,6 +369,17 @@
 			player.position.x += vx;
 		}
 		
+		//ruch lewo i prawo
+		if ( direction == "left" ){
+			vx = -2;
+			player.rotation.y = -Math.PI/2;
+		}
+		if ( direction == "right" ){			
+			vx = 2;
+			player.rotation.y = Math.PI/2;
+			player.animations[ "walk" ].play()
+		}	
+		
 		//kolizje platform
 		var originPoint = player.position.clone();
 		ray.ray.origin.copy (originPoint);
@@ -321,7 +389,7 @@
 		var intersections2 = rayUp.intersectObjects(collidableMeshList);
 		if (intersections2.length > 0) {
 			var distance = intersections2[0].distance;
-			if (falling == false && distance > 0 && distance <= 23){
+			if (falling == false && distance > 0 && distance <= 5){
 				vy = 0;
 				falling = true;
 			}
@@ -344,17 +412,8 @@
 		
 		if (inAir == false && distance < 4.5){
 		player.position.y+=1;
-		}
+		}		
 		
-		//ruch lewo i prawo
-		if ( direction == "left" ){
-			vx = -2;
-			player.rotation.y = -Math.PI/2;
-		}
-		if ( direction == "right" ){
-			vx = 2;
-			player.rotation.y = Math.PI/2;
-		}	
 		
 		//kamera sledzi
 		camera.lookAt(player.position)

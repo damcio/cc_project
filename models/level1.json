@@ -1,0 +1,202 @@
+{
+    "geometries": [{
+        "materials": [{
+            "colorEmissive": [0,0,0],
+            "opacity": 1,
+            "wireframe": false,
+            "DbgName": "Material",
+            "depthTest": true,
+            "shading": "phong",
+            "DbgIndex": 0,
+            "specularCoef": 50,
+            "colorAmbient": [0,0,0],
+            "DbgColor": 15658734,
+            "colorSpecular": [0.5,0.5,0.5],
+            "blending": "NormalBlending",
+            "depthWrite": true,
+            "colorDiffuse": [0.048071,0.8,0.019105],
+            "visible": true,
+            "transparent": false
+        }],
+        "uuid": "177258CD-E805-3431-A0E7-E38A4302E26C",
+        "data": {
+            "faces": [35,0,1,2,3,0,0,1,2,3,35,4,7,6,5,0,4,5,6,7,35,0,4,5,1,0,0,4,7,1,35,1,5,6,2,0,1,7,6,2,35,2,6,7,3,0,2,6,5,3,35,4,0,3,7,0,4,0,3,5],
+            "uvs": [],
+            "name": "Cube.005Geometry",
+            "normals": [0.577349,0.577349,-0.577349,0.577349,-0.577349,-0.577349,-0.577349,-0.577349,-0.577349,-0.577349,0.577349,-0.577349,0.577349,0.577349,0.577349,-0.577349,0.577349,0.577349,-0.577349,-0.577349,0.577349,0.577349,-0.577349,0.577349],
+            "metadata": {
+                "uvs": 0,
+                "faces": 6,
+                "normals": 8,
+                "generator": "io_three",
+                "materials": 1,
+                "vertices": 8,
+                "version": 3
+            },
+            "vertices": [1,1,-1,1,-1,-1,-1,-1,-1,-1,1,-1,1,0.999999,1,0.999999,-1,1,-1,-1,1,-1,1,1]
+        },
+        "type": "Geometry"
+    },{
+        "materials": [{
+            "colorEmissive": [0,0,0],
+            "opacity": 1,
+            "wireframe": false,
+            "DbgName": "Material.001",
+            "depthTest": true,
+            "shading": "phong",
+            "DbgIndex": 0,
+            "specularCoef": 50,
+            "colorAmbient": [0,0,0],
+            "DbgColor": 15658734,
+            "colorSpecular": [0.5,0.5,0.5],
+            "blending": "NormalBlending",
+            "depthWrite": true,
+            "colorDiffuse": [0.019346,0.032684,0.8],
+            "visible": true,
+            "transparent": false
+        }],
+        "uuid": "60FD2917-B4D9-3102-96B7-C16AE0DE9A8E",
+        "data": {
+            "faces": [35,0,1,2,3,0,0,1,2,3,35,4,7,6,5,0,4,5,6,7,35,0,4,5,1,0,0,4,7,1,35,1,5,6,2,0,1,7,6,2,35,2,6,7,3,0,2,6,5,3,35,4,0,3,7,0,4,0,3,5],
+            "uvs": [],
+            "name": "Cube.000Geometry",
+            "normals": [0.577349,0.577349,-0.577349,0.577349,-0.577349,-0.577349,-0.577349,-0.577349,-0.577349,-0.577349,0.577349,-0.577349,0.577349,0.577349,0.577349,-0.577349,0.577349,0.577349,-0.577349,-0.577349,0.577349,0.577349,-0.577349,0.577349],
+            "metadata": {
+                "uvs": 0,
+                "faces": 6,
+                "normals": 8,
+                "generator": "io_three",
+                "materials": 1,
+                "vertices": 8,
+                "version": 3
+            },
+            "vertices": [1,1,-1,1,-1,-1,-1,-1,-1,-1,1,-1,1,0.999999,1,0.999999,-1,1,-1,-1,1,-1,1,1]
+        },
+        "type": "Geometry"
+    },{
+        "materials": [{
+            "colorEmissive": [0,0,0],
+            "opacity": 1,
+            "wireframe": false,
+            "DbgName": "Material",
+            "depthTest": true,
+            "shading": "phong",
+            "DbgIndex": 0,
+            "specularCoef": 50,
+            "colorAmbient": [0,0,0],
+            "DbgColor": 15658734,
+            "colorSpecular": [0.5,0.5,0.5],
+            "blending": "NormalBlending",
+            "depthWrite": true,
+            "colorDiffuse": [0.048071,0.8,0.019105],
+            "visible": true,
+            "transparent": false
+        }],
+        "uuid": "FB2708FB-C615-3C7B-9894-5994890795AB",
+        "data": {
+            "faces": [35,0,1,2,3,0,0,1,2,3,35,4,7,6,5,0,4,5,6,7,35,0,4,5,1,0,0,4,7,1,35,1,5,6,2,0,1,7,6,2,35,2,6,7,3,0,2,6,5,3,35,4,0,3,7,0,4,0,3,5],
+            "uvs": [],
+            "name": "Cube.006Geometry",
+            "normals": [0.577349,0.577349,-0.577349,0.577349,-0.577349,-0.577349,-0.577349,-0.577349,-0.577349,-0.577349,0.577349,-0.577349,0.577349,0.577349,0.577349,-0.577349,0.577349,0.577349,-0.577349,-0.577349,0.577349,0.577349,-0.577349,0.577349],
+            "metadata": {
+                "uvs": 0,
+                "faces": 6,
+                "normals": 8,
+                "generator": "io_three",
+                "materials": 1,
+                "vertices": 8,
+                "version": 3
+            },
+            "vertices": [1,1,-1,1,-1,-1,-1,-1,-1,-1,1,-1,1,0.999999,1,0.999999,-1,1,-1,-1,1,-1,1,1]
+        },
+        "type": "Geometry"
+    },{
+        "materials": [{
+            "colorEmissive": [0,0,0],
+            "opacity": 1,
+            "wireframe": false,
+            "DbgName": "Material.002",
+            "depthTest": true,
+            "shading": "phong",
+            "DbgIndex": 0,
+            "specularCoef": 50,
+            "colorAmbient": [0,0,0],
+            "DbgColor": 15658734,
+            "colorSpecular": [0.5,0.5,0.5],
+            "blending": "NormalBlending",
+            "depthWrite": true,
+            "colorDiffuse": [0.8,0.581342,0.056677],
+            "visible": true,
+            "transparent": false
+        }],
+        "uuid": "0084019A-7463-3055-84C3-7BF9F0218712",
+        "data": {
+            "faces": [35,0,1,2,3,0,0,1,2,3,35,4,7,6,5,0,4,5,6,7,35,0,4,5,1,0,0,4,7,1,35,1,5,6,2,0,1,7,6,2,35,2,6,7,3,0,2,6,5,3,35,4,0,3,7,0,4,0,3,5],
+            "uvs": [],
+            "name": "Cube.004Geometry",
+            "normals": [0.577349,0.577349,-0.577349,0.577349,-0.577349,-0.577349,-0.577349,-0.577349,-0.577349,-0.577349,0.577349,-0.577349,0.577349,0.577349,0.577349,-0.577349,0.577349,0.577349,-0.577349,-0.577349,0.577349,0.577349,-0.577349,0.577349],
+            "metadata": {
+                "uvs": 0,
+                "faces": 6,
+                "normals": 8,
+                "generator": "io_three",
+                "materials": 1,
+                "vertices": 8,
+                "version": 3
+            },
+            "vertices": [1,1,-1,1,-1,-1,-1,-1,-1,-1,1,-1,1,0.999999,1,0.999999,-1,1,-1,-1,1,-1,1,1]
+        },
+        "type": "Geometry"
+    }],
+    "object": {
+        "children": [{
+            "type": "Mesh",
+            "name": "Cube",
+            "uuid": "F29D1AC4-D789-3D8E-BAB5-59DC1B758FE2",
+            "matrix": [-25,0,0,0,0,0,25,0,0,0.5,0,0,5.93749,32.555,0.15321,1],
+            "visible": true,
+            "castShadow": true,
+            "receiveShadow": true,
+            "geometry": "0084019A-7463-3055-84C3-7BF9F0218712"
+        },{
+            "type": "Mesh",
+            "name": "Cube.001",
+            "uuid": "7E8B5B6C-C1E8-35F8-8CAD-F6CC57432E76",
+            "matrix": [-300,0,0,0,0,0,25,0,0,0.5,0,0,-94.0625,-27.445,0.15321,1],
+            "visible": true,
+            "castShadow": true,
+            "receiveShadow": true,
+            "geometry": "177258CD-E805-3431-A0E7-E38A4302E26C"
+        },{
+            "type": "Mesh",
+            "name": "Cube.002",
+            "uuid": "6A298CF0-087E-3A53-B34F-A23A322F7458",
+            "matrix": [-25,0,0,0,0,0,25,0,0,0.5,0,0,80.9375,12.555,-0.460857,1],
+            "visible": true,
+            "castShadow": true,
+            "receiveShadow": true,
+            "geometry": "60FD2917-B4D9-3102-96B7-C16AE0DE9A8E"
+        },{
+            "type": "Mesh",
+            "name": "Cube.003",
+            "uuid": "53B46322-3B17-3316-88D7-CEA9743B477E",
+            "matrix": [-25,0,0,0,0,0,25,0,0,0.5,0,0,5.93749,-17.445,0.15321,1],
+            "visible": true,
+            "castShadow": true,
+            "receiveShadow": true,
+            "geometry": "FB2708FB-C615-3C7B-9894-5994890795AB"
+        }],
+        "type": "Scene",
+        "matrix": [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+        "uuid": "26CDCE81-7648-4A4B-88B4-90AE41787E5E"
+    },
+    "metadata": {
+        "sourceFile": "level1.blend",
+        "type": "Object",
+        "generator": "io_three",
+        "version": 4.3
+    },
+    "textures": [],
+    "images": [],
+    "materials": []
+}
