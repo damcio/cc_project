@@ -10,10 +10,11 @@
 <h3 class="message">Loading</h3></div></div>
 <div id="ThreeJS"></div>
 <script src="js/jquery.js"></script>
-<script src="js/three.js"></script>
+<script src="js/three71.js"></script>
 <script src="js/Detector.js"></script>
-<script src="SpeedBlendCharacter.js"></script>
+<script src="js/BlendCharacter.js"></script>
 <script src="js/dat.gui.min.js"></script>
+<script src="js/SceneLoader.js"></script>
 <script>
 	//zmienne
 	var container, scene, camera, renderer, composer;
@@ -26,7 +27,7 @@
 	
 	var ifHeld = false, rtHeld = false;
 	var vy = 0, vx = 0, loaded = 0, gravity = 0.3, rise = 0.2;
-	var jumping = false, inAir = true, falling = false;
+	var jumping = false, inAir = true, falling = false; isMove = false;
 	var SHADOW_MAP_WIDTH = 2048, SHADOW_MAP_HEIGHT = 2048;	
 	
 	$(function() {
@@ -95,33 +96,39 @@
 		rayUp.ray.direction.set( 0, 1, 0 );
 		
 		//user input
-		document.addEventListener('keydown',function(e){
-			switch(e.keyCode){
-				case 37: //left
-					direction = "left";
-					break;
-				case 38: //up
-					jump();
-					break;
-				case 39: //right
-					direction = "right";
-					animationSelect = "walk";					
-					break;
-			};		
-		}, false);
-			
-		document.addEventListener('keyup',function(e){
-			switch(e.keyCode){
-				case 37: //left
-					direction = "";
-					break;
-				case 39: //right
-					direction = "";
-					animationSelect = "idle";
-					break;
-			};		
-		}, false);
-			
+	//	document.addEventListener('keydown',function(e){
+	//		switch(e.keyCode){
+	//			case 37: //left
+	//				direction = "left";
+	//				break;
+	//			case 38: //up
+	//				jump();
+	//				break;
+	//			case 39: //right
+	//				direction = "right";					
+	//				break;
+	//		};		
+	//	}, false);
+	//		
+	//	document.addEventListener('keyup',function(e){
+	//		switch(e.keyCode){
+	//			case 37: //left
+	//				direction = "";
+	//				player.stopAll();
+	//				player.crossfade('walk','idle',3);
+	//				break;
+	//			case 39: //right
+	//				direction = "";
+	//				player.stopAll();
+	//				player.crossfade('walk','idle',3);
+	//				break;
+	//		};		
+	//	}, false);
+		window.addEventListener( 'resize', onWindowResize, false );
+		
+		document.addEventListener( 'keydown', onKeyDown, false );
+		document.addEventListener( 'keyup', onKeyUp, false );	
+		
 		loadModels();
 	};
 	
@@ -154,78 +161,75 @@
 			loadScene();
 			
 		    ////load the hero robot
-			loader = new THREE.JSONLoader();
+			//loader = new THREE.JSONLoader();
 			//loader.load('models/bot.js', createSkinnedMesh);
-			loader.load('models/simple_model1.json', loadPlayer);
+			//loader.load('models/player_0.9.json', loadPlayer);
 			
 			////player z blendcharacter:	
-			//player = new THREE.BlendCharacter();
-			//player.load( "models/simple_model.json", loadPlayer);
-			//player.load( "models/marine_anims.js", preload);
-			//scene.add( player );
-			//cokolwiek
+			player = new THREE.BlendCharacter();
+			player.load( "models/player_0.9.json", preload() );
 		}	
 	}
 	
-	function loadPlayer (geometry, materials) {
-		
-		//var material = new THREE.MeshLambertMaterial(materials[0]);
-		
-		var originalMaterial = materials[ 0 ];
+//	function loadPlayer (geometry, materials) {
+//		
+//		//var material = new THREE.MeshLambertMaterial(materials[0]);
+//		
+//		var originalMaterial = materials[ 0 ];
+//
+//		originalMaterial.skinning = true;
+//		
+//		player = new THREE.SkinnedMesh(geometry, originalMaterial);
+//		
+//				
+//		player.animations = [];
+//		
+//		for ( var i = 0; i < geometry.animations.length; ++ i ) {
+//				
+//				////v1
+//				
+//				THREE.AnimationHandler.add(geometry.animations[ i ]);
+//				
+//				var animName = geometry.animations[ i ].name;
+//				player.animations[ animName ] = new THREE.Animation( player, geometry.animations[ i ] );
+//				//ensureLoop( player.animations[ animName ]);
+//				
+//				
+//				
+//		}	
+//		
+//		//player.scale.multiplyScalar(5);
+//		player.castShadow = true;
+//		player.receiveShadow = true;
+//		
+//		scene.add(player);
+//		
+//		//skellington helper
+//		helper = new THREE.SkeletonHelper( player );
+//		
+//		helper.material.linewidth = 5;
+//		helper.visible = true;
+//		scene.add( helper );
+//		
+//		preload();
+//	}	
 
-		originalMaterial.skinning = true;
-		
-		player = new THREE.SkinnedMesh(geometry, originalMaterial);
-		
-				
-		player.animations = {};
-		
-		for ( var i = 0; i < geometry.animations.length; ++ i ) {
-				
-				////v1
-				
-				THREE.AnimationHandler.add(geometry.animations[ i ]);
-				
-				var animName = geometry.animations[ i ].name;
-				player.animations[ animName ] = new THREE.Animation( player, geometry.animations[ i ] );
-				//ensureLoop( player.animations[ animName ]);
-				
-				
-				
-		}	
-		
-		//player.scale.multiplyScalar(5);
-		player.castShadow = true;
-		player.receiveShadow = true;
-		
-		scene.add(player);
-		
-		//skellington helper
-		helper = new THREE.SkeletonHelper( player );
-		
-		helper.material.linewidth = 3;
-		helper.visible = true;
-		scene.add( helper );
-		
-		preload();
-	}	
-
-	function ensureLoop( animation ) {
-
-		for ( var i = 0; i < animation.hierarchy.length; i ++ ) {
-
-			var bone = animation.hierarchy[ i ];
-
-			var first = bone.keys[ 0 ];
-			var last = bone.keys[ bone.keys.length - 1 ];
-
-			last.pos = first.pos;
-			last.rot = first.rot;
-			last.scl = first.scl;
-
-		}
-
-	}
+//	function ensureLoop( animation ) {
+//
+//		for ( var i = 0; i < animation.hierarchy.length; i ++ ) {
+//
+//			var bone = animation.hierarchy[ i ];
+//
+//			var first = bone.keys[ 0 ];
+//			var last = bone.keys[ bone.keys.length - 1 ];
+//
+//			last.pos = first.pos;
+//			last.rot = first.rot;
+//			last.scl = first.scl;
+//
+//		}
+//
+//	}
 	//nowy level
 	function levelUp(newLevel){
 		
@@ -266,7 +270,11 @@
 		if (level == 1){ 
 			//level 1 pozycje
 			//platforms.position.x = 200; 
-			player.position.set(0, 20, 0);			
+			player.position.set(0, 20, 0);
+			player.castShadow = true;
+			player.receiveShadow = true;
+			scene.add (player);
+			player.play('idle',1);
 		}
 		//gotowe:
 		$( '.message' ).replaceWith( "<h3 id='play' class='play'>PLAY</h3>" );
@@ -321,7 +329,67 @@
 			return true;
 		}
 	}
+
 	
+	
+	function onKeyDown ( event ) {
+	
+		switch( event.keyCode ) {
+
+			//case 38: /*up*/
+			//case 87: /*W*/ 
+			case 37:
+			direction = "left"; 								
+			break;
+
+			
+			case 38: //up
+			jump();
+			break;
+			
+			//case 40: /*down*/
+			//case 83: /*S*/ 	 
+			case 39:
+			direction ="right"; 			
+			break;
+		}
+		
+	};
+
+	function onKeyUp ( event ) {
+
+		switch( event.keyCode ) {
+
+			//case 38: /*up*/
+			//case 87: /*W*/ 
+			case 37:
+			direction ="";
+			player.stopAll();
+			player.crossfade('walk','idle',1); 
+			break;
+
+			//case 40: /*down*/
+			//case 83: /*S*/
+			case 39:
+			direction ="";
+			player.stopAll();
+			player.crossfade('walk','idle',1); 
+			break;
+
+
+		}
+
+	};	
+
+	
+	function onWindowResize() {
+
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+
+		renderer.setSize( window.innerWidth, window.innerHeight );
+
+	}
 	//renderer
 	function render() {
 		renderer.clear();
@@ -330,24 +398,30 @@
 	}
 
 	//pomoc przy wektorach
-	Array.prototype.remove = function(from, to) {
-	  var rest = this.slice((to || from) + 1 || this.length);
-	  this.length = from < 0 ? this.length + from : from;
-	  return this.push.apply(this, rest);
-	};
-	
-	Array.prototype.insert = function (index, item) {
-	  this.splice(index, 0, item);
-	};
+//	Array.prototype.remove = function(from, to) {
+//	  var rest = this.slice((to || from) + 1 || this.length);
+//	  this.length = from < 0 ? this.length + from : from;
+//	  return this.push.apply(this, rest);
+//	};
+//	
+//	Array.prototype.insert = function (index, item) {
+//	  this.splice(index, 0, item);
+//	};
 	
 	function animate() {
+	
 		var delta = clock.getDelta();
+		var scale = 1.0;
+		var stepSize = delta * scale;
+		
 		requestAnimationFrame (animate, renderer.domElement);		
 		if (inPlay){
-		THREE.AnimationHandler.update(delta);
-		helper.update();
-		render();
-		update();
+			player.update( stepSize );
+			THREE.AnimationHandler.update(stepSize);
+			//helper.update();
+			render();
+			update();
+			
 		}
 	}
 	
@@ -372,14 +446,28 @@
 		//ruch lewo i prawo
 		if ( direction == "left" ){
 			vx = -2;
-			player.rotation.y = -Math.PI/2;
+			if (!isMove){
+				player.stopAll()
+				player.crossfade('idle','walk',1.5);
+				player.rotation.y = -Math.PI/2;
+				isMove = true;				
+			}
 		}
+		
 		if ( direction == "right" ){			
 			vx = 2;
-			player.rotation.y = Math.PI/2;
-			player.animations[ "walk" ].play()
+			if (!isMove){
+				player.stopAll()
+				player.crossfade('idle','walk',1.5);
+				player.rotation.y = Math.PI/2;
+				isMove = true;				
+			}
 		}	
 		
+		if (direction == ""){
+			vx = 0;
+			isMove = false;					
+		}		
 		//kolizje platform
 		var originPoint = player.position.clone();
 		ray.ray.origin.copy (originPoint);
@@ -389,7 +477,7 @@
 		var intersections2 = rayUp.intersectObjects(collidableMeshList);
 		if (intersections2.length > 0) {
 			var distance = intersections2[0].distance;
-			if (falling == false && distance > 0 && distance <= 5){
+			if (falling == false && distance > 0 && distance <= 2){
 				vy = 0;
 				falling = true;
 			}
@@ -399,7 +487,7 @@
 		var intersections = ray.intersectObjects( collidableMeshList );
 		if ( intersections.length > 0 ) {
 			var distance = intersections[ 0 ].distance;
-			if ( distance > 0 && distance > 5 ) {
+			if ( distance > 0 && distance > 2 ) {
 				player.position.y -= vy;
 				inAir = true;
 			}else{
@@ -410,7 +498,7 @@
 			}
 		}
 		
-		if (inAir == false && distance < 4.5){
+		if (inAir == false && distance < 1.5){
 		player.position.y+=1;
 		}		
 		

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+	<title>model test</title>
+	<meta charset="utf-8">
+	</head>
+	
+	<body>
+		<div id="container"></div>
+		
+		<script src = "js/three71.js"></script>
+		<script src = "js/Detector.js"></script>
+		<script src = "js/OrbitControls.js"></script>
+		<script src = "js/BlendCharacter.js"></script>
+
+		<script src="js/dat.gui.min.js"></script>
+		<script>
+		
+			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+			var container;
+
+			var camera, scene, renderer, controls;
+			
+			var cameraControls;
+			
+			var player;
+			
+			var vz = 0;
+			var direction = "";
+			
+			var SCREEN_WIDTH = window.innerWidth;
+			var SCREEN_HEIGTH = window.innerHeight;
+			
+			var clock = new THREE.Clock();
+			
+			var gui = null;
+
+			var isFrameStepping = false;
+			var timeToStep = 0;
+			
+			init ();			
+			
+			function init() {
+				
+				camera = new THREE.PerspectiveCamera (45, window.innerWidth / window.innerHeight, 1, 4000 );
+				camera.position.set (0, 150, 300);
+				
+				scene = new THREE.Scene();
+				
+				scene.fog = new THREE.FogExp2 (0xffffff, 0.0002);
+				
+				scene.add(camera);
+				
+				scene.add(new THREE.AmbientLight( 0x222222));
+				
+				var light = new THREE.DirectionalLight (0xffffff, 2.25);
+				light.position.set(-100, 200, -300);
+				
+				light.castShadow = true;
+				light.shadowMapWidth = 1024;
+				light.shadowMapHeight = 1024;
+				light.shadowMapDarkness = 0.95;
+				light.shadowCameraNear = 50;
+				light.shadowCameraFar = 1000;
+				//light.shadowCameraTop = 400;
+				//light.shadowCameraBottom = -250;
+				//light.shadowCameraRight = 900;
+				//light.shadowCameraLeft = -1000;
+				//light.target = (0,0,0);
+				scene.add (light) ;
+				
+				var spotLight = new THREE.SpotLight( 0xffffff );
+				spotLight.position.set( 100, 50, 100 );
+
+				spotLight.castShadow = true;
+
+				spotLight.shadowMapWidth = 1024;
+				spotLight.shadowMapHeight = 1024;
+
+				spotLight.shadowCameraNear = 50;
+				spotLight.shadowCameraFar = 400;
+				spotLight.shadowCameraFov = 45;
+
+				scene.add( spotLight );
+				
+				var gt = THREE.ImageUtils.loadTexture( "textures/grass.jpg");
+				var gg = new THREE.PlaneBufferGeometry( 16000, 16000 );
+				var gm = new THREE.MeshPhongMaterial( { color: 0x333333, map: gt } );
+				//var gm = new THREE.MeshPhongMaterial(0xffaaee);
+
+				var ground = new THREE.Mesh( gg, gm );
+				ground.rotation.x = - Math.PI / 2;
+				ground.material.map.repeat.set( 64, 64 );
+				ground.material.map.wrapS = ground.material.map.wrapT = THREE.RepeatWrapping;
+				// note that because the ground does not cast a shadow, .castShadow is left false
+				ground.receiveShadow = true;
+
+				scene.add( ground );
+				
+				
+				var geometry = new THREE.BoxGeometry( 10, 10, 10 );
+				var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+				var mesh = new THREE.Mesh( geometry, material );
+				scene.add( mesh ); 
+				mesh.position.x = 30;
+				mesh.position.y = 10;
+				mesh.position.z = 30;
+				mesh.recieveShadow = true;
+				mesh.castShadow = true;
+		//		var geometry = new THREE.PlaneGeometry( 2000, 2000, 32 );
+		//		var material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+		//		var plane = new THREE.Mesh( geometry, material );
+		//		scene.add( plane );
+				
+				
+				//var loader = new THREE.JSONLoader();
+				//loader.load('models/bot.js', createSkinnedMesh);
+				//loader.load('models/simple_model1111.json', loadPlayer);
+								
+				
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setClearColor( scene.fog.color, 1 );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGTH );
+				renderer.setClearColor( 0xaaaaaa, 1 );
+				
+				container = document.getElementById( 'container' );
+				container.appendChild( renderer.domElement );
+				
+				window.addEventListener( 'resize', onWindowResize, false );
+
+				// listen for messages from the gui
+				
+				document.addEventListener( 'keydown', onKeyDown, false );
+				document.addEventListener( 'keyup', onKeyUp, false );
+				
+				//cameraControls = new THREE.OrbitControls( camera, renderer.domElement );				
+				//cameraControls.target.set( 0,0,0 );
+				
+				loader = new THREE.BlendCharacter();
+				loader.load( "models/player_0.9.json", start );
+				
+			}
+			
+			function start() {
+
+				//loader.rotation.y = Math.PI * -135 / 180;
+				loader.castShadow = true;
+				loader.receiveShadow = true;
+				scene.add( loader );
+
+				var aspect = window.innerWidth / window.innerHeight;
+				var radius = loader.geometry.boundingSphere.radius;
+
+				camera = new THREE.PerspectiveCamera( 45, aspect, 1, 10000 );
+				camera.position.set( 0.0, radius, radius * 3.5 );
+
+				controls = new THREE.OrbitControls( camera );
+				controls.target = new THREE.Vector3( 0, radius, 0 );
+				controls.update();
+
+				// Set default weights
+
+				//loader.animations[ 'idle' ].weight = 1 / 2;
+				//loader.animations[ 'walk' ].weight = 1 / 2;
+
+				loader.play ('idle',1);
+				animate();
+			}
+			
+			
+			function animate() {
+
+				requestAnimationFrame( animate, renderer.domElement );
+
+				// step forward in time based on whether we're stepping and scale
+
+				var scale = 1.0;
+				var delta = clock.getDelta();
+				var stepSize = (!isFrameStepping) ? delta * scale: timeToStep;
+
+				// modify blend weights
+
+				loader.update( stepSize );
+				//gui.update();
+
+				THREE.AnimationHandler.update( stepSize );
+
+				renderer.render( scene, camera );
+				//stats.update();
+				
+				// if we are stepping, consume time
+				// ( will equal step size next time a single step is desired )
+				move();
+				timeToStep = 0;
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+			
+			
+			function onKeyDown ( event ) {
+
+				switch( event.keyCode ) {
+
+					//case 38: /*up*/
+					case 87: /*W*/ 	
+					direction = "up"; 								
+					break;
+
+					//case 40: /*down*/
+					case 83: /*S*/ 	 
+					direction ="down"; 			
+					break;
+
+
+				}
+
+			};
+
+			function onKeyUp ( event ) {
+
+				switch( event.keyCode ) {
+
+					//case 38: /*up*/
+					case 87: /*W*/ 
+					direction ="";
+					loader.stopAll();
+					loader.crossfade('walk','idle',1); 
+					break;
+
+					//case 40: /*down*/
+					case 83: /*S*/ 	 
+					direction ="";
+					loader.stopAll();
+					loader.crossfade('walk','idle',1); 
+					break;
+
+
+				}
+
+			};
+
+			function move (){
+				loader.position.z += vz;
+				
+				if (direction == "up"){
+					vz = 3;
+					if (!isMove){
+						loader.stopAll();
+						loader.crossfade('idle','walk',1); 
+						loader.rotation.y = 0;
+						isMove = true;
+					}								
+				}
+				if (direction == "down"){
+					vz = -3;
+					if (!isMove){
+						loader.stopAll();
+						loader.crossfade('idle','walk',1);
+						loader.rotation.y = -Math.PI;
+						isMove = true;
+					}
+				}
+				if (direction == ""){
+					vz = 0;
+					isMove = false;					
+				}
+
+			}
+			</script>
+		
+	</body>
+</html>
