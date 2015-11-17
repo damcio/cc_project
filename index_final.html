@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>G*erka</title>
+</head>
+<body>
+
+	<!-- //first screen -->
+<div id="blank"><div id="loading">
+<!-- <p><img src="img/logo.jpg"></p> -->
+<h3 class="message">Loading</h3></div></div>
+<div id="ThreeJS"></div>
+<script src = "js/jquery.js"></script>
+<script src = "js/three71.js"></script>
+<script src = "js/Detector.js"></script>
+<script src = "js/BlendCharacter.js"></script>
+<script src = "js/dat.gui.min.js"></script>
+<script src = "js/SceneLoader.js"></script>
+<script src = 'js/threex.collider.js'></script>
+<script src = 'js/threex.collidersystem.js'></script>
+<script src = 'js/threex.colliderhelper.js'></script>	
+<script src = 'js/webaudiox.three.js'></script>
+<script src = 'js/webaudiox.js'></script>
+<script src = "js/underscore.js"></script>
+<script>
+	//zmienne
+	var container, scene, camera, renderer;
+	var direction = "",level = 1, inPlay = false;
+	var player, ray, rayUp;
+	var collidableMeshList = [];  
+
+	var meshs = [];
+	var colliders = [];
+	var collider_helpers = [];
+	
+	var clock = new THREE.Clock();
+	
+	var vy = 0, vx = 0, loaded = 0, gravity = 0.3, rise = 0.2;
+	var jumping = false, inAir = true, falling = false; isMove = false;
+	var SHADOW_MAP_WIDTH = 2048, SHADOW_MAP_HEIGHT = 2048;	
+	
+	var colliderSystem = new THREEx.ColliderSystem;
+    
+    var themeSound;
+    var stepSound;
+    var listener;
+    
+	
+	$(function() {
+		init();
+	});
+	
+	//////funkcje
+	
+	//inicjalizacjia
+	function init() {
+		//scena
+		scene = new THREE.Scene();        
+        
+		scene.fog = new THREE.FogExp2( 0xffffff, 0.0002 );
+		//kamera
+		var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+		var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH/SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+        
+		camera = new THREE.PerspectiveCamera (VIEW_ANGLE, ASPECT, NEAR, FAR);
+		scene.add(camera);
+		camera.position.set(0,150,200);
+		
+		
+		//renderer2.0
+		renderer = new THREE.WebGLRenderer( { alpha:true, antialias: true } );
+		renderer.setSize( window.innerWidth, window.innerHeight );			
+		renderer.shadowMapEnabled = true;
+		renderer.shadowMapSoft = true;
+		//link do elementu div
+		container = document.getElementById ( 'ThreeJS' );
+		container.appendChild ( renderer.domElement );
+		
+		//swiatlo
+		var light = new THREE.SpotLight ( 0xffffff, 1, 0, Math.PI, 1);
+		light.position.set (1000, 300, 100);
+		light.target.position.set(0, 0, 0);
+		
+		light.castShadow = true;
+		light.shadowCameraNear = 300;
+		light.shadowCameraFar = 1500;
+		light.shadowCameraFov = 45;
+		
+		light.shadowBias = 0.005;
+		light.shadowDarkness = 0.55;
+		light.shadowMapWidth = SHADOW_MAP_WIDTH;
+		light.shadowMapHeight = SHADOW_MAP_HEIGHT;
+		light.shadowMapSoft = true;
+		
+		scene.add( light );
+        
+        var amlight = new THREE.AmbientLight( 0x404040 );
+        scene.add( amlight );
+        
+        //skybox
+        var path = "images/skybox/";
+        var format = '.jpg';
+        var urls = [
+            path + 'px' + format, path + 'nx' + format,
+            path + 'py' + format, path + 'ny' + format,
+            path + 'pz' + format, path + 'nz' + format
+        ];
+
+        var textureCube = THREE.ImageUtils.loadTextureCube( urls, THREE.CubeRefractionMapping );
+        
+        var shader = THREE.ShaderLib[ "cube" ];
+        shader.uniforms[ "tCube" ].value = textureCube;
+
+        var material = new THREE.ShaderMaterial( {
+
+            fragmentShader: shader.fragmentShader,
+            vertexShader: shader.vertexShader,
+            uniforms: shader.uniforms,
+            depthWrite: false,
+            side: THREE.BackSide
+
+        } )
+
+        sky = new THREE.Mesh( new THREE.BoxGeometry( 10000, 10000, 10000 ), material );
+        scene.add( sky );
+	
+		//promien od kolizji
+		ray = new THREE.Raycaster();
+		ray.ray.direction.set( 0, -1 ,0 );
+		rayUp = new THREE.Raycaster();
+		rayUp.ray.direction.set( 0, 1, 0 );	
+		
+		
+		window.addEventListener( 'resize', onWindowResize, false );
+		
+		document.addEventListener( 'keydown', onKeyDown, false );
+		document.addEventListener( 'keyup', onKeyUp, false );	
+		
+		loadModels();
+	};
+	
+	////wczytanie modeli i gry
+	
+	//modele
+	function loadModels(){
+	
+		////player z blendcharacter:	
+		player = new THREE.BlendCharacter();
+		player.load( "models/player_0.9.json", preload() );        
+                        
+        //objectloader loadscene
+        var loader = new THREE.ObjectLoader();
+        loader.load("models/level_final.json", function ( result ) {
+			result.traverse( function ( object ) {                
+				if ( object instanceof THREE.Mesh ) {
+					meshs.push(object);
+				}
+			} );
+			for ( meshsId in meshs) {
+				scene.add(meshs[meshsId]);
+                meshs[meshsId].castShadow = true;
+				meshs[meshsId].recieveShadow = true;
+                if (meshs[meshsId].name.substring(0,4) != "Flag"){                
+                    initPersonalStorage(meshs[meshsId]);
+                    createCollider(meshs[meshsId]);
+                    collidableMeshList.push(meshs[meshsId]);
+                }
+
+				preload();
+				}			
+			});      
+
+	}
+    
+    // wczytanie dzwieku
+    function loadSounds(){
+        listener = new THREE.AudioListener();
+        player.add(listener);        
+        
+        themeSound = new THREE.Audio( listener );
+        themeSound.load( 'sounds/theme.wav' );
+        themeSound.setRefDistance( 100 );
+        themeSound.setLoop(true);
+        themeSound.setVolume(0.4);
+        themeSound.autoplay = true;                
+        player.add( themeSound ); 
+
+        stepSound = new THREE.Audio( listener );
+        stepSound.load( "sounds/step.wav");
+        stepSound.setRefDistance (1);
+        stepSound.setVolume(1);
+        stepSound.setLoop(true);
+        player.add(stepSound);
+        
+        jumpSound = new THREE.Audio( listener );
+        jumpSound.load( "sounds/jump.wav");
+        jumpSound.setRefDistance (1);
+        jumpSound.setVolume(0.2);        
+        player.add(jumpSound);
+    }
+
+	//preload
+	function preload(){
+		//wczytaj wszystko zanim zacznij gre
+		loaded ++;
+		if (loaded == 2){			
+			levelSet();
+            loadSounds();
+			animate();
+		}
+	}	
+
+	//ustawienie levelu
+	function levelSet(){		
+        //pozycje					
+        scene.add (player);
+        player.castShadow = true;
+        player.receiveShadow = true;
+        player.name = 'player';
+        initPersonalStorage(player);
+        createCollider(player);
+        player.position.set(0, 20, 0);
+        player.play('idle',1);
+		
+		//gotowe:
+		$( '.message' ).replaceWith( "<h3 id='play' class='play'>PLAY</h3>" );
+		$( "#play" ).click(function() { 
+			$( "#blank" ).fadeOut("slow");
+			inPlay = true;
+		});
+	
+	}
+    
+	////elementy gameplay
+	//skok
+	function jump() {
+		if (jumping == false && inAir == false) {
+		player.position.y += 8;
+		vy = -5;
+		jumping = true;
+        jumpSound.play();
+		}
+	}
+
+	
+	function onKeyDown ( event ) {
+	
+		switch( event.keyCode ) {
+			
+			case 37:
+			direction = "left"; 								
+			break;
+
+			
+			case 38: //up
+			jump();
+			break;			
+			 
+			case 39:
+			direction ="right"; 			
+			break;
+		}
+		
+	};
+
+	function onKeyUp ( event ) {
+
+		switch( event.keyCode ) {
+
+			case 37:
+			direction ="";
+			player.stopAll();
+			player.crossfade('walk','idle',1); 
+            stepSound.stop();
+			break;
+
+			case 39:
+			direction ="";
+			player.stopAll();
+			player.crossfade('walk','idle',1); 
+            stepSound.stop();
+			break;
+
+
+		}
+
+	};	
+
+	
+	function onWindowResize() {
+
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+
+		renderer.setSize( window.innerWidth, window.innerHeight );
+
+	}
+	//renderer
+	function render() {
+		renderer.clear();
+		renderer.render( scene, camera );
+	}
+
+
+	function animate() {
+	
+		var delta = clock.getDelta();
+		var scale = 1.0;
+		var stepSize = delta * scale;
+		
+		requestAnimationFrame (animate, renderer.domElement);		
+		if (inPlay){
+			player.update( stepSize );
+			THREE.AnimationHandler.update(stepSize);
+			
+			objectMoved(player);
+			
+			//helper.update();
+			render();
+			update();
+			
+		}
+	}
+	
+	//main loop
+	function update(){
+	
+		player.STORE.position.previous = _.clone(player.STORE.position.current);
+	    player.STORE.position.current = _.clone(player.position);
+		//grawitacja
+		vy += gravity;
+		if (inAir){
+			if  (vy>5){
+				vy=5;
+			}
+		}
+		
+		//ruch + ograniczenia ruchu
+		if (direction == "left" && player.position.x > 0 ){
+			player.position.x += vx;
+		}
+		if (direction == "right"){
+			player.position.x += vx;
+		}
+		
+		//ruch lewo i prawo
+		if ( direction == "left" ){
+			vx = -2;
+			if (!isMove){
+                if(!inAir){
+                    stepSound.play();
+                }
+				player.stopAll()
+				player.crossfade('idle','walk',1.5);
+				player.rotation.y = -Math.PI/2;
+				isMove = true;				
+			}
+		}
+		
+		if ( direction == "right" ){			
+			vx = 2;
+			if (!isMove){
+                if(!inAir){
+                    stepSound.play();
+                }
+				player.stopAll()
+				player.crossfade('idle','walk',1.5);
+				player.rotation.y = Math.PI/2;
+				isMove = true;				
+			}
+		}	
+		
+		if (direction == ""){
+			vx = 0;
+			isMove = false;					
+		}
+		
+		//kolizje platform up/down
+		var originPoint = player.position.clone();
+		ray.ray.origin.copy (originPoint);
+		rayUp.ray.origin.copy(originPoint);
+		
+		//nad glowa
+		var intersections2 = rayUp.intersectObjects(collidableMeshList);
+		if (intersections2.length > 0) {
+			var distance = intersections2[0].distance;
+			if (falling == false && distance > 0 && distance <= 5){
+				vy = 0;
+				falling = true;
+			}
+		}		
+		
+		//ponizej
+		var intersections = ray.intersectObjects( collidableMeshList );
+        
+		if ( intersections.length > 0 ) {
+			var distance = intersections[ 0 ].distance;
+			if ( distance > 0 && distance > 5 ) {
+				player.position.y -= vy;
+				inAir = true;
+			}else{
+				falling = false;
+				inAir = false;
+				vy=0; 		// switch gravity off
+				jumping = false;
+			}
+		}
+	
+        //'kolizja' z woda
+		if (player.position.y < -20){
+            player.position.set(0, 20, 0);
+        }
+		//kamera sledzi
+		camera.lookAt(player.position)
+		camera.position.x += ((player.position.x - camera.position.x))* .02;
+		camera.position.y += (((player.position.y+30 ) - camera.position.y)) * .08 			
+
+	}
+
+    //sprawdzaj pozycje przed i po
+	function initPersonalStorage(object){
+		object.STORE = {
+			position: {
+				previous : _.clone(object.position),
+				current : _.clone(object.position)
+			}
+		};
+	}			
+	
+    //stworz box kolizji
+	function createCollider(object){
+		var collider = THREEx.Collider.createFromObject3d(object);
+		collider.userData.name = object.name;
+		colliders.push(collider);		
+		
+		//create a collider_helper
+		var collider_helper = new THREEx.ColliderHelper(collider);
+		object.userData.helper = collider_helper;
+		collider_helper.material.color.set('green');
+		collider_helpers.push(collider_helper);
+		//scene.add(collider_helper);			
+		
+		// przypisz event tylko do gracza
+		if(object.uuid !== player.uuid) return;
+		
+		collider.addEventListener('contactEnter', function(otherCollider){    
+
+			var thisObject = collider.object3d;        
+			if(thisObject.uuid !== player.uuid) return;
+			
+			var lastPosition = _.clone(thisObject.STORE.position.previous);
+			thisObject.position.set(lastPosition.x, lastPosition.y, lastPosition.z);			
+			
+			thisObject.updateMatrixWorld( true );		
+			thisObject.STORE.position.current = lastPosition;
+			
+			objectMoved(thisObject);			
+			
+		});		
+
+	}			
+	
+	function objectMoved(object){
+		_.each(colliders, function(collider)
+		{
+			//console.log(collider.id)
+			if (collider.userData.name == "player"){
+				collider.update('transform');
+			}	else{
+				collider.update();
+			}
+		});
+		
+		_.each(collider_helpers, function(collider_helper)
+		{
+			collider_helper.update();
+		});
+		colliderSystem.computeAndNotify(colliders);    
+		
+	}
+</script>
+</body>
+</html>
